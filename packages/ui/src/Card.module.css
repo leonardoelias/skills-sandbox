@@ -1,0 +1,20 @@
+/* Mais espaço em cima que embaixo, de propósito (para a ritmo achar). */
+.card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: var(--space-5) var(--space-4) var(--space-3);
+  background: var(--surface);
+}
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: 18px;
+}
+.body {
+  color: var(--muted);
+}
+.body p {
+  margin: 0;
+}
+.footer {
+  margin-top: var(--space-4);
+}

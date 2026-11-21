@@ -1,0 +1,15 @@
+{
+  "$schema": "./.claude/skills/visual-diff/visual-diff.schema.json",
+  "appDir": "apps/web",
+  "startCommand": "npm run dev -- -p {port}",
+  "baseUrl": "http://localhost:{port}",
+  "routes": [
+    { "path": "/" },
+    { "path": "/precos" },
+    { "path": "/blog" },
+    { "path": "/blog/ola" }
+  ],
+  "themes": [{ "name": "light" }, { "name": "dark", "colorScheme": "dark" }],
+  "capture": { "locale": "pt-BR", "fixedTime": "run-start" },
+  "audits": { "a11y": true }
+}

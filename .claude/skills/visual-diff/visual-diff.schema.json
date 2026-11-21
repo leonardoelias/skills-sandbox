@@ -1,0 +1,597 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "visual-diff.config.json",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "appDir": {
+      "type": "string",
+      "description": "Subpasta do app num monorepo."
+    },
+    "startCommand": {
+      "type": "string",
+      "description": "Comando do servidor; {port} vira uma porta livre. \"static:<pasta>\" usa o servidor estático embutido."
+    },
+    "baseUrl": {
+      "type": "string"
+    },
+    "installCommand": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "deps": {
+      "enum": [
+        "auto",
+        "link",
+        "install"
+      ],
+      "description": "auto: liga o node_modules do checkout principal e instala quando o lockfile difere ou o app é Next."
+    },
+    "startTimeoutMs": {
+      "type": "number"
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "waitFor": {
+                "type": "string",
+                "description": "Seletor CSS ou \"js:<expressão>\" que precisa ser verdadeira antes da captura."
+              },
+              "variants": {
+                "type": "object",
+                "description": "Captura só o head com ?param=valor para cada valor e monta uma faixa comparativa.",
+                "properties": {
+                  "param": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number"
+                          ]
+                        }
+                      }
+                    ],
+                    "description": "\"1..4\" ou uma lista"
+                  },
+                  "viewports": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "themes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "param",
+                  "values"
+                ],
+                "additionalProperties": false
+              },
+              "motion": {
+                "type": "object",
+                "properties": {
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "description": "Um passo de interação: hover, click, focus, type, press, scroll ou wait.",
+                      "properties": {
+                        "hover": {
+                          "type": "string"
+                        },
+                        "click": {
+                          "type": "string"
+                        },
+                        "focus": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "object",
+                          "properties": {
+                            "selector": {
+                              "type": "string"
+                            },
+                            "text": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "press": {
+                          "type": "string"
+                        },
+                        "scroll": {
+                          "type": "number"
+                        },
+                        "wait": {
+                          "type": "number"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "durationMs": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "globalFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "viewports": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "desktop, tablet, mobile ou nome:LxA@escala"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "number"
+                  },
+                  "height": {
+                    "type": "number"
+                  },
+                  "deviceScaleFactor": {
+                    "type": "number"
+                  },
+                  "isMobile": {
+                    "type": "boolean"
+                  },
+                  "hasTouch": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "themes": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "colorScheme": {
+                "enum": [
+                  "light",
+                  "dark",
+                  "no-preference"
+                ]
+              },
+              "query": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "localStorage": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "cookie": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "htmlClass": {
+                "type": "string"
+              },
+              "htmlAttr": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "capture": {
+      "type": "object",
+      "properties": {
+        "mask": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hide": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maskEmbeds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fullPage": {
+          "type": "boolean"
+        },
+        "settleMs": {
+          "type": "number"
+        },
+        "maxRetakes": {
+          "type": "number"
+        },
+        "fixedTime": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "\"run-start\", uma data ISO ou null"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "maxHeight": {
+          "type": "number"
+        },
+        "maxScrollSteps": {
+          "type": "number"
+        },
+        "networkIdleMs": {
+          "type": "number"
+        },
+        "waitFor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "blockHosts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blockDefaultHosts": {
+          "type": "boolean"
+        },
+        "concurrency": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "diff": {
+      "type": "object",
+      "properties": {
+        "threshold": {
+          "type": "number"
+        },
+        "focusRegions": {
+          "type": "number"
+        },
+        "rowTolerance": {
+          "type": "number"
+        },
+        "composeFormat": {
+          "enum": [
+            "jpeg",
+            "png"
+          ]
+        },
+        "maxFocusArea": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "detect": {
+      "type": "object",
+      "properties": {
+        "uiExtensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignore": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maxRoutes": {
+          "type": "number"
+        },
+        "maxDepth": {
+          "type": "number"
+        },
+        "aliases": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "auth": {
+      "type": "object",
+      "properties": {
+        "headers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^\\$\\w+$",
+            "description": "Referência a uma variável de ambiente (\"$NOME\"), nunca o valor."
+          }
+        },
+        "cookies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^\\$\\w+$",
+                "description": "Referência a uma variável de ambiente (\"$NOME\"), nunca o valor."
+              },
+              "domain": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "storageState": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "origins": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "previews",
+              "local"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "audits": {
+      "type": "object",
+      "properties": {
+        "a11y": {
+          "type": "boolean"
+        },
+        "tokens": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "include": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "colorTolerance": {
+                  "type": "number"
+                },
+                "allow": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "motion": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "motion": {
+      "type": "object",
+      "properties": {
+        "durationMs": {
+          "type": "number"
+        },
+        "fps": {
+          "type": "number"
+        },
+        "maxWidth": {
+          "type": "number"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Um passo de interação: hover, click, focus, type, press, scroll ou wait.",
+            "properties": {
+              "hover": {
+                "type": "string"
+              },
+              "click": {
+                "type": "string"
+              },
+              "focus": {
+                "type": "string"
+              },
+              "type": {
+                "type": "object",
+                "properties": {
+                  "selector": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "press": {
+                "type": "string"
+              },
+              "scroll": {
+                "type": "number"
+              },
+              "wait": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "cache": {
+      "type": "object",
+      "properties": {
+        "base": {
+          "type": "boolean"
+        },
+        "worktrees": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "publish": {
+      "type": "object",
+      "properties": {
+        "branch": {
+          "type": "string"
+        },
+        "marker": {
+          "type": "string"
+        },
+        "remote": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "repo": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "owner/repo (ou host/owner/repo) onde o PR vive, se não for o do remote."
+        },
+        "host": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
