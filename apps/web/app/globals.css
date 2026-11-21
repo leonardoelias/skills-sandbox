@@ -45,7 +45,7 @@ h1, h2, h3 { line-height: 1.15; }
 .newsletter { margin-top: var(--space-7); display: grid; gap: var(--space-1); max-width: 420px; }
 .newsletter input { padding: var(--space-2) var(--space-3); border: 1px solid var(--line); border-radius: 6px; font: inherit; background: var(--bg); color: inherit; }
 
-.posts { list-style: none; padding: 0; margin: var(--space-6) 0 0; display: grid; gap: var(--space-5); }
+.posts { list-style: none; padding: 0; margin: var(--space-6) 0 0; display: grid; gap: var(--space-6); }
 .posts a { color: inherit; font-weight: 600; font-size: 20px; }
 .posts p { margin: var(--space-1) 0 0; color: var(--muted); }
 .post h1 { font-size: 36px; margin: 0 0 var(--space-2); }

@@ -7,6 +7,7 @@ const links = [
   { href: '/', label: 'Início' },
   { href: '/precos', label: 'Preços' },
   { href: '/blog', label: 'Blog' },
+  { href: '/contato', label: 'Contato' },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
