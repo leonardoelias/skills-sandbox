@@ -182,7 +182,9 @@ export function uploadAssets(root, branch, plan, { remote = 'origin', retries = 
       if (lines.length) sh('git', ['update-index', '--add', '--index-info'], { cwd: root, env, input: lines.join('\n') + '\n', step: 'publish' });
       const treeSha = lines.length ? sh('git', ['write-tree'], { cwd: root, env }).stdout.trim() : sh('git', ['hash-object', '-t', 'tree', '-w', '--stdin'], { cwd: root, input: '' }).stdout.trim();
       const commit = sh('git', ['commit-tree', treeSha, '-m', message], { cwd: root, env: identityEnv(root), step: 'publish' }).stdout.trim();
-      const push = sh('git', ['push', '--quiet', '--no-verify', `--force-with-lease=refs/heads/${branch}:${oldSha}`, remote, `${commit}:refs/heads/${branch}`], { cwd: root, allowFail: true });
+      // Pacotes acima de 1 MB (o padrão de http.postBuffer) vão em pedaços, e o GitHub às vezes
+      // responde "RPC failed; HTTP 400". Um buffer grande, só neste comando, evita isso.
+      const push = sh('git', ['-c', 'http.postBuffer=524288000', 'push', '--quiet', '--no-verify', `--force-with-lease=refs/heads/${branch}:${oldSha}`, remote, `${commit}:refs/heads/${branch}`], { cwd: root, allowFail: true });
       if (push.ok) {
         log(`assets enviados para ${branch} em ${remote} (${add.length} imagem(ns), ${keep.length} mantida(s))`);
         return commit;
@@ -193,6 +195,7 @@ export function uploadAssets(root, branch, plan, { remote = 'origin', retries = 
         continue;
       }
       let hint = 'Sem permissão de push? Fork? Use --no-upload para um comentário só com texto.';
+      if (/RPC failed|hung up|unexpected disconnect|HTTP 5\d\d|timed out|Could not resolve host/i.test(err)) hint = 'Falha de rede ou do servidor durante o envio (não de permissão). Tente de novo; se repetir, confira a conexão ou use --no-upload.';
       if (/protected|rule|GH013|force.?push/i.test(err)) hint = `Uma regra (ruleset/branch protection) bloqueia force-push em ${branch}. Exclua essa branch da regra (veja references/privacy.md) ou use --no-upload.`;
       throw new CliError(`git push para ${branch} falhou: ${err}\n${hint}`, { step: 'publish', code: 3 });
     }
