@@ -44,12 +44,16 @@ function rowUniform(img, y) {
 /**
  * Duas linhas são "quase iguais" quando no máximo `tolerance` (fração da largura) dos pixels têm
  * diferença acima de 48 em algum canal. Absorve a rasterização um pouco diferente de páginas altas.
+ * Uma linha lisa (só fundo) nunca é quase igual a uma com conteúdo: bordas claras (#e2e8f0 difere do
+ * branco em menos de 48) e a ponta de um acento (2 px) passariam na tolerância, e o espaço inserido
+ * acabaria dentro do card, com esses pixels contados como alteração.
  */
-function makeNearEq(A, B, hashA, hashB, tolerance) {
+function makeNearEq(A, B, hashA, hashB, tolerance, uniformA, uniformB) {
   const width = A.width;
   const maxBad = Math.floor(width * tolerance);
   return (ya, yb) => {
     if (hashA[ya] === hashB[yb]) return true;
+    if (uniformA[ya] !== uniformB[yb]) return false;
     const a = A.data;
     const b = B.data;
     let bad = 0;
@@ -93,7 +97,9 @@ export function alignRows(A, B, { tolerance = 0.003 } = {}) {
   const hashB = rowHashes(B);
   const uniformA = new Uint8Array(A.height);
   for (let y = 0; y < A.height; y++) uniformA[y] = rowUniform(A, y) ? 1 : 0;
-  const nearEq = makeNearEq(A, B, hashA, hashB, tolerance);
+  const uniformB = new Uint8Array(B.height);
+  for (let y = 0; y < B.height; y++) uniformB[y] = rowUniform(B, y) ? 1 : 0;
+  const nearEq = makeNearEq(A, B, hashA, hashB, tolerance, uniformA, uniformB);
   const matchB = new Int32Array(B.height).fill(-1);
   // Distância aproximada entre duas linhas (amostra 1 a cada 4 pixels).
   const rowDistance = (ya, yb) => {
